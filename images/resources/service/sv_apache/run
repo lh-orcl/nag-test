@@ -1,0 +1,5 @@
+#!/bin/bash
+
+export TZ="$NAGIOS_TIMEZONE"
+
+exec /usr/sbin/httpd -D NO_DETACH
