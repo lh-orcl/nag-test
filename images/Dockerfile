@@ -79,7 +79,9 @@ RUN mv /etc/httpd/conf.d/nagios.conf /etc/httpd/conf.d/00-nagios.conf
 
 RUN echo "use_timezone=${NAGIOS_TIMEZONE}" >> ${NAGIOS_HOME}/etc/nagios.cfg
 
-ADD resources/service /etc/service
+RUN rm -rf /etc/rsyslog.d /etc/rsyslog.conf
+
+ADD resources/ /
 
 ADD resources/start_nagios /usr/local/bin/start_nagios
 
