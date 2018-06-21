@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Exit if anything fails
+set -e
+
 DOCKER_RUN_REPO="lh-orcl"
 DOCKER_RUN_IMAGE="docker-nagios_test"
 
