@@ -1,20 +1,20 @@
 FROM centos:6.9
-MAINTAINER Luke Hutton <luke.hutton@oracle.com>
+MAINTAINER Luke Hutton <luke.hutton.oracle@gmail.com>
 
 # Initally working from:
 #       puguy83/docker-nagios
 #       asonRivers/Docker-Nagios
 
-ENV NAGIOS_HOME			/opt/nagios
-ENV NAGIOS_USER			nagios
-ENV NAGIOS_GROUP 		nagios
-ENV NAGIOS_CMDUSER		nagioscmd
-ENV NAGIOS_CMDGROUP		nagioscmd
-ENV NAGIOSADMIN_USER	nagiosadmin
-ENV NAGIOSADMIN_PASS	nagios
-ENV APACHE_RUN_USER		nagios
-ENV APACHE_RUN_GROUP	nagios
-ENV NAGIOS_TIMEZONE		UTC
+ENV NAGIOS_HOME				/opt/nagios
+ENV NAGIOS_USER				nagios
+ENV NAGIOS_GROUP 			nagios
+ENV NAGIOS_CMDUSER			nagioscmd
+ENV NAGIOS_CMDGROUP			nagioscmd
+ENV NAGIOSADMIN_USER		nagiosadmin
+ENV NAGIOSADMIN_PASS		nagios
+ENV APACHE_RUN_USER			nagios
+ENV APACHE_RUN_GROUP		nagios
+ENV NAGIOS_TIMEZONE			UTC
 
 RUN ( curl -s https://packagecloud.io/install/repositories/imeyer/runit/script.rpm.sh | bash )
 
@@ -53,7 +53,8 @@ RUN cd /tmp																								&& \
 	make install 																						&& \
 	make install-config																					&& \
 	make install-commandmode																			&& \
-	make install-webconf
+	make install-webconf																				&& \
+	make clean
 
 RUN htpasswd -cb $NAGIOS_HOME/etc/htpasswd.user $NAGIOSADMIN_USER $NAGIOSADMIN_PASS
 
@@ -62,7 +63,11 @@ RUN cd /tmp																								&& \
 	tar -xvzf nagios-plugins-1.5.tar.gz																	&& \
 	cd nagios-plugins-1.5																				&& \
 	./configure --with-nagios-user=$NAGIOS_USER --with-nagios-group=$NAGIOS_GROUP --prefix=$NAGIOS_HOME	&& \
-	make
+	make																								&& \
+	make install																						&& \
+	make clean
+	
+RUN rm -rf /tmp/*
 	
 RUN sed -i 's/\#ServerName www.example.com:80/ServerName localhost/g' /etc/httpd/conf/httpd.conf
 
