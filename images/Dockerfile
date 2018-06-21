@@ -41,7 +41,7 @@ RUN yum install -y \
 RUN ( egrep -i $NAGIOS_GROUP /etc/group || groupadd $NAGIOS_GROUP )										&& \
 	( egrep -i $NAGIOS_CMDGROUP /etc/group || groupadd $NAGIOS_CMDGROUP )
 RUN ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER    )	&& \
-    ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )	&& \
+  ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )	&& \
 	( egrep -i apache /etc/passwd && usermod -a -G $NAGIOS_CMDUSER apache )
 
 RUN cd /tmp																								&& \
