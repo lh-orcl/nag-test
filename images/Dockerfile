@@ -71,6 +71,10 @@ RUN rm -rf /tmp/*
 	
 RUN sed -i 's/\#ServerName www.example.com:80/ServerName localhost/g' /etc/httpd/conf/httpd.conf
 
+# Custom config for monitoring local Nagios server (TEST)
+RUN sed -i 's/check_load -w/check_load -r -w/g' /opt/nagios/etc/objects/commands.cfg
+RUN sed -i 's/check_local_load!5.0,4.0,3.0!10.0,6.0,4.0/check_local_load!1.0,0.8,0.6!2.0,1.8,1.2/g' /opt/nagios/etc/objects/localhost.cfg
+
 RUN mv /etc/httpd/conf.d/nagios.conf /etc/httpd/conf.d/00-nagios.conf
 	
 RUN echo "use_timezone=${NAGIOS_TIMEZONE}" >> ${NAGIOS_HOME}/etc/nagios.cfg
