@@ -14,7 +14,7 @@ ENV NAGIOSADMIN_USER		nagiosadmin
 ENV NAGIOSADMIN_PASS		nagios
 ENV APACHE_RUN_USER			nagios
 ENV APACHE_RUN_GROUP		nagios
-ENV NAGIOS_TIMEZONE			UTC
+ENV NAGIOS_TIMEZONE			GMT
 
 # Download repo to allow for "runit" install
 RUN ( curl -s https://packagecloud.io/install/repositories/imeyer/runit/script.rpm.sh | bash )
