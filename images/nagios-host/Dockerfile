@@ -15,7 +15,7 @@ ENV NAGIOSADMIN_PASS		nagios
 ENV APACHE_RUN_USER			nagios
 ENV APACHE_RUN_GROUP		nagios
 ENV NAGIOS_TIMEZONE			GMT
-ENV NRPE_BRANCH					nrpe-2.15
+ENV NSCA_BRANCH					nsca-2.9.1
 
 # Download repo to allow for "runit" install
 RUN ( curl -s https://packagecloud.io/install/repositories/imeyer/runit/script.rpm.sh | bash )
@@ -74,17 +74,17 @@ RUN cd /tmp																																																		&& \
 	make install																																																&& \
 	make clean
 
-	RUN cd /tmp                                                                  																&& \
-  git clone https://github.com/NagiosEnterprises/nrpe.git -b $NRPE_BRANCH  																		&& \
-  cd nrpe                                                                  																		&& \
-  ./configure                                   																															\
-      --with-ssl=/usr/bin/openssl               																															\
-      --with-ssl-lib=/usr/lib/x86_64-linux-gnu 																																\
-                                                                           																		&& \
-  make check_nrpe                                                         																		&& \
-  cp src/check_nrpe ${NAGIOS_HOME}/libexec/                                																		&& \
-  make clean
-
+# Config, build, install NSCA plugin
+RUN cd /tmp
+	git clone https://github.com/NagiosEnterprises/nsca.git -b $NSCA_BRANCH																			&& \
+	cd nsca																																																			&& \
+	./configure --with-nsca-user=$NAGIOS_USER --with-nsca-grp=$NAGIOS_GROUP																			&& \
+	make																																																				&& \
+	cp src/* ${NAGIOS_HOME}/libexec/																																						&& \
+	chown -R $NAGIOS_USER:$NAGIOS_GROUP $NAGIOS_HOME/libexec/																										&& \
+	cp ./sample-config/nsca.cfg $NAGIOS_HOME/etc/																																&& \
+	make clean
+	
 # Clean /tmp to reduce image size
 RUN rm -rf /tmp/*
 
