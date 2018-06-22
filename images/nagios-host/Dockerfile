@@ -15,6 +15,7 @@ ENV NAGIOSADMIN_PASS		nagios
 ENV APACHE_RUN_USER			nagios
 ENV APACHE_RUN_GROUP		nagios
 ENV NAGIOS_TIMEZONE			GMT
+ENV NRPE_BRANCH					nrpe-2.15
 
 # Download repo to allow for "runit" install
 RUN ( curl -s https://packagecloud.io/install/repositories/imeyer/runit/script.rpm.sh | bash )
@@ -40,37 +41,48 @@ RUN yum install -y \
 && rm -rf /var/cache/yum
 
 # Check for existing users/groups and modify as required
-RUN ( egrep -i $NAGIOS_GROUP /etc/group || groupadd $NAGIOS_GROUP )										&& \
+RUN ( egrep -i $NAGIOS_GROUP /etc/group || groupadd $NAGIOS_GROUP )																						&& \
 	( egrep -i $NAGIOS_CMDGROUP /etc/group || groupadd $NAGIOS_CMDGROUP )
-RUN ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER    )	&& \
-  ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )	&& \
+RUN ( id -u $NAGIOS_USER    || useradd --system -d $NAGIOS_HOME -g $NAGIOS_GROUP    $NAGIOS_USER    )					&& \
+  ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )						&& \
 	( egrep -i apache /etc/passwd && usermod -a -G $NAGIOS_CMDUSER apache )
 
 # Config, build, install Nagios
-RUN cd /tmp																								&& \
-	curl -O https://datapacket.dl.sourceforge.net/project/nagios/nagios-3.x/nagios-3.5.1/nagios-3.5.1.tar.gz && \
-	tar -xvzf nagios-3.5.1.tar.gz																		&& \
-	cd nagios																							&& \
+RUN cd /tmp																																																		&& \
+	curl -O https://datapacket.dl.sourceforge.net/project/nagios/nagios-3.x/nagios-3.5.1/nagios-3.5.1.tar.gz 		&& \
+	tar -xvzf nagios-3.5.1.tar.gz																																								&& \
+	cd nagios																																																		&& \
 	./configure --with-command-group=nagioscmd --enable-nanosleep --enable-event-broker--with-nagios-command-user=nagioscmd --with-nagios-user=$NAGIOS_USER --with-nagios-group=$NAGIOS_GROUP --prefix=$NAGIOS_HOME --exec-prefix=$NAGIOS_HOME && \
 	make all	&& \
-	make install 																						&& \
-	make install-config																					&& \
-	make install-commandmode																			&& \
-	make install-webconf																				&& \
+	make install 																																																&& \
+	make install-config																																													&& \
+	make install-commandmode																																										&& \
+	make install-webconf																																												&& \
 	make clean
 
 # Set auth on Nagios site
 RUN htpasswd -cb $NAGIOS_HOME/etc/htpasswd.user $NAGIOSADMIN_USER $NAGIOSADMIN_PASS
 
 # Config, build, install Nagios Plugins
-RUN cd /tmp																								&& \
-	curl -O https://www.nagios-plugins.org/download/nagios-plugins-1.5.tar.gz							&& \
-	tar -xvzf nagios-plugins-1.5.tar.gz																	&& \
-	cd nagios-plugins-1.5																				&& \
-	./configure --with-nagios-user=$NAGIOS_USER --with-nagios-group=$NAGIOS_GROUP --prefix=$NAGIOS_HOME	&& \
-	make																								&& \
-	make install																						&& \
+RUN cd /tmp																																																		&& \
+	curl -O https://www.nagios-plugins.org/download/nagios-plugins-1.5.tar.gz																		&& \
+	tar -xvzf nagios-plugins-1.5.tar.gz																																					&& \
+	cd nagios-plugins-1.5																																												&& \
+	./configure --with-nagios-user=$NAGIOS_USER --with-nagios-group=$NAGIOS_GROUP --prefix=$NAGIOS_HOME					&& \
+	make																																																				&& \
+	make install																																																&& \
 	make clean
+
+	RUN cd /tmp                                                                  																&& \
+  git clone https://github.com/NagiosEnterprises/nrpe.git -b $NRPE_BRANCH  																		&& \
+  cd nrpe                                                                  																		&& \
+  ./configure                                   																															\
+      --with-ssl=/usr/bin/openssl               																															\
+      --with-ssl-lib=/usr/lib/x86_64-linux-gnu 																																\
+                                                                           																		&& \
+  make check_nrpe                                                         																		&& \
+  cp src/check_nrpe ${NAGIOS_HOME}/libexec/                                																		&& \
+  make clean
 
 # Clean /tmp to reduce image size
 RUN rm -rf /tmp/*
