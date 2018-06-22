@@ -84,6 +84,7 @@ RUN sed -i 's/check_local_load!5.0,4.0,3.0!10.0,6.0,4.0/check_local_load!1.0,0.8
 
 RUN sed -i 's/\#cfg_dir=\/opt\/nagios\/etc\/servers/cfg_dir=\/opt\/nagios\/etc\/servers/g' ${NAGIOS_HOME}/etc/nagios.cfg
 RUN sed -i 's/\#use_regexp_matching=1/use_regexp_matching=1/g' ${NAGIOS_HOME}/etc/nagios.cfg
+RUN sed -i '/use_regexp_matching=1/a \/usr\/local\/nagios\/etc\/objects\/hostsgroup_clients.cfg' ${NAGIOS_HOME}/etc/nagios.cfg
 
 # Set Nagios site as default
 RUN mv /etc/httpd/conf.d/nagios.conf /etc/httpd/conf.d/00-nagios.conf
