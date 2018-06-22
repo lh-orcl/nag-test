@@ -94,10 +94,11 @@ RUN rm -rf /etc/rsyslog.d /etc/rsyslog.conf
 ADD resources/ /
 ADD resources/start_nagios /usr/local/bin/start_nagios
 
+RUN chmod -R +x /opt/nagios/etc/
 RUN chmod +x /usr/local/bin/start_nagios
 RUN chmod -R +x /etc/service
 
 EXPOSE 80
 
-# Go! 
+# Go!
 CMD [ "/usr/local/bin/start_nagios" ]
