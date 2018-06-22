@@ -3,11 +3,11 @@ MAINTAINER Luke Hutton <luke.hutton.oracle@gmail.com>
 
 # Initally working from:
 #       puguy83/docker-nagios
-#       asonRivers/Docker-Nagios
+#       JasonRivers/Docker-Nagios
 
-ENV NAGIOS_HOME				/opt/nagios
-ENV NAGIOS_USER				nagios
-ENV NAGIOS_GROUP 			nagios
+ENV NAGIOS_HOME					/opt/nagios
+ENV NAGIOS_USER					nagios
+ENV NAGIOS_GROUP 				nagios
 ENV NAGIOS_CMDUSER			nagioscmd
 ENV NAGIOS_CMDGROUP			nagioscmd
 ENV NAGIOSADMIN_USER		nagiosadmin
