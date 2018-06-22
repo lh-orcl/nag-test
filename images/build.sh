@@ -10,6 +10,6 @@ DOCKER_NAG_NET="client-net"
 docker build -t	$DOCKER_RUN_REPO/$DOCKER_RUN_IMAGE:latest .
 
 docker images
-docker run -d --name "$DOCKER_RUN_IMAGE" -p 80:80 -t "$DOCKER_RUN_REPO/$DOCKER_RUN_IMAGE"
+docker run -di --name "$DOCKER_RUN_IMAGE" -p 80:80 -t "$DOCKER_RUN_REPO/$DOCKER_RUN_IMAGE"
 docker network connect $DOCKER_NAG_NET $DOCKER_RUN_IMAGE
 docker ps -a
