@@ -75,7 +75,7 @@ RUN cd /tmp																																																		&& \
 	make clean
 
 # Config, build, install NSCA plugin
-RUN cd /tmp
+RUN cd /tmp																																																		&& \
 	git clone https://github.com/NagiosEnterprises/nsca.git -b $NSCA_BRANCH																			&& \
 	cd nsca																																																			&& \
 	./configure --with-nsca-user=$NAGIOS_USER --with-nsca-grp=$NAGIOS_GROUP																			&& \
@@ -84,7 +84,7 @@ RUN cd /tmp
 	chown -R $NAGIOS_USER:$NAGIOS_GROUP $NAGIOS_HOME/libexec/																										&& \
 	cp ./sample-config/nsca.cfg $NAGIOS_HOME/etc/																																&& \
 	make clean
-	
+
 # Clean /tmp to reduce image size
 RUN rm -rf /tmp/*
 
