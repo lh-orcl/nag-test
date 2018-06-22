@@ -26,6 +26,7 @@ RUN yum install -y \
 	gd-devel \
 	glibc \
 	glibc-common \
+	git \
 	httpd \
 	php \
 	perl \
